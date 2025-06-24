@@ -170,10 +170,48 @@ namespace WarrantV
         }
 
         private static ScriptSettings ConfigFile = ScriptSettings.Load("scripts\\Okoniewitz\\WarrantsV\\Config.ini");
+        
+        public static Model[] PoliceVehs;
+        public static Model[] CopModels;
 
         public static void Read()
         {
             ConfigFile = ScriptSettings.Load("scripts\\Okoniewitz\\WarrantsV\\Config.ini");
+            
+            // Cop Models External File
+            if (File.Exists("scripts\\Okoniewitz\\WarrantsV\\CopModels.txt"))
+            {
+                string[] CopModelsList = File.ReadAllLines("scripts\\Okoniewitz\\WarrantsV\\CopModels.txt");
+                
+                CopModels = new Model[CopModelsList.Length];
+
+                for (int i = 0; i < CopModelsList.Length; i++)
+                {
+                    CopModels[i] = (Model)CopModelsList[i];
+                }
+            }
+            else
+            {
+                File.WriteAllLines("scripts\\Okoniewitz\\WarrantsV\\CopModels.txt", ModelLists.DefaultCopModels);
+            }
+            
+            // Police Vehicles External File
+            if (File.Exists("scripts\\Okoniewitz\\WarrantsV\\PoliceVehs.txt"))
+            {
+                string[] PoliceVehsList = File.ReadAllLines("scripts\\Okoniewitz\\WarrantsV\\PoliceVehs.txt");
+
+                PoliceVehs = new Model[PoliceVehsList.Length];
+                
+                for (int i = 0; i < PoliceVehsList.Length; i++)
+                {
+                    PoliceVehs[i] = (Model)PoliceVehsList[i];
+                }
+            }
+            else
+            {
+                File.WriteAllLines("scripts\\Okoniewitz\\WarrantsV\\PoliceVehs.txt", ModelLists.DefaultPoliceVehs);
+            }
+
             string[] ConfigLines =
             {
                 "[FEATURES]",

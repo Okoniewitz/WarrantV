@@ -169,7 +169,7 @@ namespace WarrantV
                     DeadDelay = Game.GameTime + 30000;
                     Helpers.ClearList(true, (true, Helpers.PlayerID()), true);
                 }
-                Ped[] peds = World.GetAllPeds(Helpers.CopModels);
+                Ped[] peds = World.GetAllPeds(Config.CopModels);
                 Vehicle[] vehs = World.GetAllVehicles();
                 if (Helpers.CompareArrays(EachTick.RecognizedClothes[Helpers.PlayerID()].Item1, Helpers.GetPlayerClothes(), Config.Numeric.ClothesDifferencesToClearWarrant, true).Item1 && EachTick.WarrantLevel[Helpers.PlayerID()] != EachTick.RecognizedClothes[Helpers.PlayerID()].Item2)
                 {
@@ -250,11 +250,11 @@ namespace WarrantV
                             WasInCar = true;
                             if (!EachTick.VehList.Any(c => c.Item1.SequenceEqual(ID)))
                             {
-                                if (Config.Bools.WantedPoliceVehs && Helpers.PoliceVehs.Contains(Game.Player.Character.CurrentVehicle.Model))
+                                if (Config.Bools.WantedPoliceVehs && Config.PoliceVehs.Contains(Game.Player.Character.CurrentVehicle.Model))
                                 {
                                     EachTick.VehList.Add(new Tuple<string[], int[]>(ID, new int[] { 2, -1 }));
                                 }
-                                if (Config.Bools.WantedRandomVehs && !Helpers.PoliceVehs.Contains(Game.Player.Character.CurrentVehicle.Model) && World.GetNearbyVehicles(Game.Player.Character.CurrentVehicle.Position, 15f, Helpers.PoliceVehs).Length == 0 && !Game.Player.Character.CurrentVehicle.PreviouslyOwnedByPlayer)
+                                if (Config.Bools.WantedRandomVehs && !Config.PoliceVehs.Contains(Game.Player.Character.CurrentVehicle.Model) && World.GetNearbyVehicles(Game.Player.Character.CurrentVehicle.Position, 15f, Config.PoliceVehs).Length == 0 && !Game.Player.Character.CurrentVehicle.PreviouslyOwnedByPlayer)
                                 {
                                     int[] rnd = new int[] { Helpers.random.Next(0, 10), Helpers.random.Next(0, 3) };
                                     if (rnd[0] <= Config.Numeric.RandomWantedCarChance) EachTick.VehList.Add(new Tuple<string[], int[]>(ID, new int[] { rnd[1], -1 }));

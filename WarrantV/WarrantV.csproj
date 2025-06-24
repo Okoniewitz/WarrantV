@@ -64,6 +64,7 @@
     <Compile Include="Scripts\Helpers.cs" />
     <Compile Include="Scripts\Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scripts\ModelLists.cs" />
     <Compile Include="TXT\ToDO.cs" />
   </ItemGroup>
   <ItemGroup>
