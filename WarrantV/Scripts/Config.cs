@@ -58,6 +58,7 @@ namespace WarrantV
             public static bool WantedWhenMasked = true;
             public static bool OnlyPassangerCanCall = true;
             public static bool RecognitionScreenFX = true;
+            public static bool DisableAllCopBlips = false;
             public static bool PhoneBlipsEnabled = true;
             public static bool AlwaysShowPlate = false;
             public static bool CopBlipHeadingIndicator = true;
@@ -185,6 +186,7 @@ namespace WarrantV
                 "WantedWhenMasked = true",
                 "OnlyPassangerCanCall = true",
                 "RecognitionScreenFX = true",
+                "DisableAllCopBlips = false",
                 "PhoneBlipsEnabled = true",
                 "AlwaysShowPlate = false",
                 "CopBlipHeadingIndicator = true",
@@ -365,6 +367,7 @@ namespace WarrantV
             Config.Bools.WantedWhenMasked = ConfigFile.GetValue<bool>("FEATURES", "WantedWhenMasked", true);
             Config.Bools.OnlyPassangerCanCall = ConfigFile.GetValue<bool>("FEATURES", "OnlyPassangerCanCall", true);
             Config.Bools.RecognitionScreenFX = ConfigFile.GetValue<bool>("FEATURES", "RecognitionScreenFX", true);
+            Config.Bools.DisableAllCopBlips = ConfigFile.GetValue<bool>("FEATURES", "DisableAllCopBlips", false);
             Config.Bools.PhoneBlipsEnabled = ConfigFile.GetValue<bool>("FEATURES", "PhoneBlipsEnabled", true);
             Config.Bools.AlwaysShowPlate = ConfigFile.GetValue<bool>("FEATURES", "AlwaysShowPlate", false);
             Config.Bools.CopBlipHeadingIndicator = ConfigFile.GetValue<bool>("FEATURES", "CopBlipHeadingIndicator", true);

@@ -272,17 +272,29 @@ namespace WarrantV
                         if (CopsList[Index].Item3[1] > Recog[1]) Recog[1] = CopsList[Index].Item3[1];
                     }
                 }
-                if (cop.CurrentVehicle.GetPedOnSeat(VehicleSeat.Driver) != cop && !cop.CurrentVehicle.IsSeatFree(VehicleSeat.Driver))
+                if (cop.CurrentVehicle.GetPedOnSeat(VehicleSeat.Driver) != cop && !cop.CurrentVehicle.IsSeatFree(VehicleSeat.Driver) || Config.Bools.DisableAllCopBlips)
                 {
                     blip.Alpha = 0;
                 }
+                
                 blip.Scale = Config.Numeric.CopBlipVehScale;
             }
             else blip.Alpha = 255;
+
+            if (Config.Bools.DisableAllCopBlips) blip.Alpha = 0;
+            
             blip.Name = $"{CopState(cop)} {CopRecogState(cop, Recog)}";
             if (Recog[0] <= 20 || Recog[1] <= 20)
             {
-                blip.Color = BlipColor.Green;
+                if (!Config.Bools.DisableAllCopBlips)
+                {
+                    blip.Color = BlipColor.Green;
+                }
+                else
+                {
+                    blip.Alpha = 0;
+                }
+                    
                 if (Game.Player.WantedLevel == 0 && TaskType == 0 && PlayerVisible && Config.Bools.CopsDoTasks)
                 {
                     cop.Task.LookAt(Game.Player.Character, 300);
@@ -290,7 +302,15 @@ namespace WarrantV
             }
             if (Recog[0] > 20 || Recog[1] > 20)
             {
-                blip.Color = BlipColor.GreenDark;
+                if (!Config.Bools.DisableAllCopBlips)
+                {
+                    blip.Color = BlipColor.GreenDark;
+                }
+                else
+                {
+                    blip.Alpha = 0;
+                }
+                
                 blip.Priority = 11;
                 if (Game.Player.WantedLevel == 0 && !cop.IsInVehicle() && TaskType == 0 && PlayerVisible && Config.Bools.CopsDoTasks)
                 {
@@ -299,7 +319,15 @@ namespace WarrantV
             }
             if (Recog[0] > 40 || Recog[1] > 40)
             {
-                blip.Color = BlipColor.Yellow;
+                if (!Config.Bools.DisableAllCopBlips)
+                {
+                    blip.Color = BlipColor.Yellow;
+                }
+                else
+                {
+                    blip.Alpha = 0;
+                }
+                
                 blip.Priority = 12;
                 if (Game.Player.WantedLevel == 0 && !cop.IsInVehicle() && TaskType == 0 && PlayerVisible && Config.Bools.CopsDoTasks)
                 {
@@ -316,7 +344,15 @@ namespace WarrantV
             }
             if (Recog[0] > 60 || Recog[1] > 60)
             {
-                blip.Color = BlipColor.Orange;
+                if (!Config.Bools.DisableAllCopBlips)
+                {
+                    blip.Color = BlipColor.Orange;
+                }
+                else
+                {
+                    blip.Alpha = 0;
+                }
+                
                 blip.Priority = 13;
                 if (TaskType <= 1 && Game.Player.WantedLevel == 0 && Config.Bools.CopsDoTasks)
                 {
@@ -333,7 +369,15 @@ namespace WarrantV
             }
             if (Recog[0] > 80 || Recog[1] > 80)
             {
-                blip.Color = BlipColor.Red;
+                if (!Config.Bools.DisableAllCopBlips)
+                {
+                    blip.Color = BlipColor.Red;
+                }
+                else
+                {
+                    blip.Alpha = 0;
+                }
+                
                 blip.Priority = 14;
                 if (TaskType <= 2 && Game.Player.WantedLevel == 0 && Config.Bools.CopsDoTasks)
                 {
@@ -374,7 +418,16 @@ namespace WarrantV
             if (Recog[0] >= 100 || Recog[1] >= 100)
             {
                 ReturnTaskType = 4;
-                blip.Color = BlipColor.RedDark;
+                
+                if (!Config.Bools.DisableAllCopBlips)
+                {
+                    blip.Color = BlipColor.RedDark;
+                }
+                else
+                {
+                    blip.Alpha = 0;
+                }
+                
                 blip.Priority = 15;
                 if (Config.Bools.ExtraBlipIndicators)
                 {
