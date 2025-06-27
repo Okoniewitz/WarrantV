@@ -150,9 +150,12 @@ namespace WarrantV
                 Even = !Even;
                 Game.Player.Character.CanWearHelmet = !Helpers.Masked().Item2;
                 if (Config.Strings.PhoneUse.Contains("ERROR")) Config.Read();
-                foreach (Tuple<Ped, Blip, float[], int[], Vector3> CopInList in Helpers.CopsList)
+                if (!Config.Bools.DisableAllCopBlips)
                 {
-                    if (CopInList.Item1.IsDead || !CopInList.Item1.Exists()) CopInList.Item2.Delete();
+                    foreach (Tuple<Ped, Blip, float[], int[], Vector3> CopInList in Helpers.CopsList)
+                    {
+                        if (CopInList.Item1.IsDead || !CopInList.Item1.Exists()) CopInList.Item2.Delete();
+                    }
                 }
                 if (Function.Call<bool>(Hash.IS_PLAYER_SWITCH_IN_PROGRESS))
                 {
@@ -333,7 +336,10 @@ namespace WarrantV
             if (Config.Bools.CrashAndEnterMessage) Notification.PostTicker("Press F to WarrantsV, it crashed", true);
             foreach (Tuple<Ped, Blip, float[], int[], Vector3> CopsList in Helpers.CopsList)
             {
-                CopsList.Item2.Delete();
+                if (!Config.Bools.DisableAllCopBlips)
+                {
+                    CopsList.Item2.Delete();
+                }
             }
             EachTick.LastCopsPositionBlip.Delete();
             EachTick.ChoiceMenus.ClosestPhoneBoothBlip.Delete();

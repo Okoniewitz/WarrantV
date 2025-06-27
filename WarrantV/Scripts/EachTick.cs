@@ -26,10 +26,18 @@ namespace WarrantV
         {
             if (!Helpers.CopsList.Any(c => c.Item1 == cop))
             {
-                Helpers.CopsList.Add(new Tuple<Ped, Blip, float[], int[], Vector3>(cop, cop.AddBlip(), new float[2], new int[3], new Vector3()));
+                if (Config.Bools.DisableAllCopBlips)
+                {
+                    Helpers.CopsList.Add(new Tuple<Ped, Blip, float[], int[], Vector3>(cop, null, new float[2], new int[3], new Vector3()));
+                }
+                else
+                {
+                    Helpers.CopsList.Add(new Tuple<Ped, Blip, float[], int[], Vector3>(cop, cop.AddBlip(), new float[2], new int[3], new Vector3()));
+                }
             }
             int Index = Helpers.CopsList.FindIndex(c => c.Item1 == cop);
-            Blip CopBlip = Helpers.CopsList[Index].Item2;
+            Blip CopBlip = null;
+            if (!Config.Bools.DisableAllCopBlips) { CopBlip = Helpers.CopsList[Index].Item2; }
             float[] Recognition = new float[] { Helpers.CopsList[Index].Item3[0], Helpers.CopsList[Index].Item3[1] };
             int LastSeen = Helpers.CopsList[Index].Item4[0];
             int CallDelay = Helpers.CopsList[Index].Item4[1];

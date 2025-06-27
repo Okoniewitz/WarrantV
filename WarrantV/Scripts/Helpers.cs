@@ -228,61 +228,77 @@ namespace WarrantV
         public static int BlipHandle(Ped cop, Blip blip, float[] Recog, int TaskType, Vector3 LastSeen, bool PlayerVisible)
         {
             int ReturnTaskType = TaskType;
-            blip.Scale = Config.Numeric.CopBlipScale;
-            blip.Priority = 10;
-            blip.IsShortRange = false;
-            blip.ShowsCrewIndicator = false;
-            blip.ShowsFriendIndicator = false;
-            switch(PlayerID())
+
+            if (blip != null)
             {
-                case 0:
-                    blip.SecondaryColor = Color.FromArgb(255, 109,184,215);
-                    break;
-                case 1:
-                    blip.SecondaryColor = Color.FromArgb(255, 176,238,175);
-                    break;
-                case 2:
-                    blip.SecondaryColor = Color.FromArgb(255,255,167,95);
-                    break;
-                default:
-                    blip.SecondaryColor = Color.White;
-                    break;
-            }
-            if (CopState(cop) == Config.Strings.CopStateHeli)
-            {
-                if (blip.Sprite != BlipSprite.HelicopterAnimated) blip.Sprite = BlipSprite.HelicopterAnimated;
-                Function.Call(Hash.SHOW_HEADING_INDICATOR_ON_BLIP, blip, false);
-            }
-            else
-            {
-                blip.Sprite = (BlipSprite)1;
-                bool EnableCone = ((Config.Bools.CopBlipCone && !Config.Bools.CopBlipOnlyWhenInvisible) || (Config.Bools.CopBlipCone && Config.Bools.CopBlipOnlyWhenInvisible && !Helpers.IsPlayerVisible()));
-                Function.Call(Hash.SHOW_HEADING_INDICATOR_ON_BLIP, blip, Config.Bools.CopBlipHeadingIndicator);
-                Function.Call(Hash.SET_BLIP_SHOW_CONE, blip, EnableCone, 11);
-            }
-            if ((cop.IsDead || !cop.Exists()) && cop.AttachedBlip != null) { blip.Delete(); return 0; }
-            if (cop.IsInVehicle())
-            {
-                if ((cop.CurrentVehicle.GetPedOnSeat(VehicleSeat.Driver) == cop && cop.IsAlive) && !cop.CurrentVehicle.IsSeatFree(VehicleSeat.Passenger))
+                blip.Scale = Config.Numeric.CopBlipScale;
+                blip.Priority = 10;
+                blip.IsShortRange = false;
+                blip.ShowsCrewIndicator = false;
+                blip.ShowsFriendIndicator = false;
+                switch(PlayerID())
                 {
-                    if (CopsList.Any(c => c.Item1 == cop.CurrentVehicle.GetPedOnSeat(VehicleSeat.Passenger)))
+                    case 0:
+                        blip.SecondaryColor = Color.FromArgb(255, 109,184,215);
+                        break;
+                    case 1:
+                        blip.SecondaryColor = Color.FromArgb(255, 176,238,175);
+                        break;
+                    case 2:
+                        blip.SecondaryColor = Color.FromArgb(255,255,167,95);
+                        break;
+                    default:
+                        blip.SecondaryColor = Color.White;
+                        break;
+                }
+                
+                if (CopState(cop) == Config.Strings.CopStateHeli)
+                {
+                    if (blip.Sprite != BlipSprite.HelicopterAnimated) blip.Sprite = BlipSprite.HelicopterAnimated;
+                    Function.Call(Hash.SHOW_HEADING_INDICATOR_ON_BLIP, blip, false);
+                }
+                else
+                {
+                    blip.Sprite = (BlipSprite)1;
+                    bool EnableCone = ((Config.Bools.CopBlipCone && !Config.Bools.CopBlipOnlyWhenInvisible) || (Config.Bools.CopBlipCone && Config.Bools.CopBlipOnlyWhenInvisible && !Helpers.IsPlayerVisible()));
+                    Function.Call(Hash.SHOW_HEADING_INDICATOR_ON_BLIP, blip, Config.Bools.CopBlipHeadingIndicator);
+                    Function.Call(Hash.SET_BLIP_SHOW_CONE, blip, EnableCone, 11);
+                }
+                
+                if ((cop.IsDead || !cop.Exists()) && cop.AttachedBlip != null) { blip.Delete(); return 0; }
+                
+                if (cop.IsInVehicle())
+                {
+                    if ((cop.CurrentVehicle.GetPedOnSeat(VehicleSeat.Driver) == cop && cop.IsAlive) && !cop.CurrentVehicle.IsSeatFree(VehicleSeat.Passenger))
                     {
-                        int Index = CopsList.FindIndex(c => c.Item1 == cop.CurrentVehicle.GetPedOnSeat(VehicleSeat.Passenger));
-                        if (CopsList[Index].Item3[0] > Recog[0]) Recog[0] = CopsList[Index].Item3[0];
-                        if (CopsList[Index].Item3[1] > Recog[1]) Recog[1] = CopsList[Index].Item3[1];
+                        if (CopsList.Any(c => c.Item1 == cop.CurrentVehicle.GetPedOnSeat(VehicleSeat.Passenger)))
+                        {
+                            int Index = CopsList.FindIndex(c => c.Item1 == cop.CurrentVehicle.GetPedOnSeat(VehicleSeat.Passenger));
+                            if (CopsList[Index].Item3[0] > Recog[0]) Recog[0] = CopsList[Index].Item3[0];
+                            if (CopsList[Index].Item3[1] > Recog[1]) Recog[1] = CopsList[Index].Item3[1];
+                        }
                     }
+                    if (cop.CurrentVehicle.GetPedOnSeat(VehicleSeat.Driver) != cop && !cop.CurrentVehicle.IsSeatFree(VehicleSeat.Driver) || Config.Bools.DisableAllCopBlips)
+                    {
+                        blip.Alpha = 0;
+                    }
+                    
+                    blip.Scale = Config.Numeric.CopBlipVehScale;
                 }
-                if (cop.CurrentVehicle.GetPedOnSeat(VehicleSeat.Driver) != cop && !cop.CurrentVehicle.IsSeatFree(VehicleSeat.Driver))
-                {
-                    blip.Alpha = 0;
-                }
-                blip.Scale = Config.Numeric.CopBlipVehScale;
+                else blip.Alpha = 255;
+                
+                blip.Name = $"{CopState(cop)} {CopRecogState(cop, Recog)}";
+                
             }
-            else blip.Alpha = 255;
-            blip.Name = $"{CopState(cop)} {CopRecogState(cop, Recog)}";
+            
+            
             if (Recog[0] <= 20 || Recog[1] <= 20)
             {
-                blip.Color = BlipColor.Green;
+                if (!Config.Bools.DisableAllCopBlips)
+                {
+                    blip.Color = BlipColor.Green;
+                }
+                    
                 if (Game.Player.WantedLevel == 0 && TaskType == 0 && PlayerVisible && Config.Bools.CopsDoTasks)
                 {
                     cop.Task.LookAt(Game.Player.Character, 300);
@@ -290,8 +306,12 @@ namespace WarrantV
             }
             if (Recog[0] > 20 || Recog[1] > 20)
             {
-                blip.Color = BlipColor.GreenDark;
-                blip.Priority = 11;
+                if (!Config.Bools.DisableAllCopBlips)
+                {
+                    blip.Color = BlipColor.GreenDark;
+                    blip.Priority = 11;
+                }
+                
                 if (Game.Player.WantedLevel == 0 && !cop.IsInVehicle() && TaskType == 0 && PlayerVisible && Config.Bools.CopsDoTasks)
                 {
                     cop.Task.LookAt(Game.Player.Character, 300);
@@ -299,8 +319,12 @@ namespace WarrantV
             }
             if (Recog[0] > 40 || Recog[1] > 40)
             {
-                blip.Color = BlipColor.Yellow;
-                blip.Priority = 12;
+                if (!Config.Bools.DisableAllCopBlips)
+                {
+                    blip.Color = BlipColor.Yellow;
+                    blip.Priority = 12;
+                }
+                
                 if (Game.Player.WantedLevel == 0 && !cop.IsInVehicle() && TaskType == 0 && PlayerVisible && Config.Bools.CopsDoTasks)
                 {
                     cop.Task.TurnTo(Game.Player.Character, 100);
@@ -316,8 +340,12 @@ namespace WarrantV
             }
             if (Recog[0] > 60 || Recog[1] > 60)
             {
-                blip.Color = BlipColor.Orange;
-                blip.Priority = 13;
+                if (!Config.Bools.DisableAllCopBlips)
+                {
+                    blip.Color = BlipColor.Orange;
+                    blip.Priority = 13;
+                }
+                
                 if (TaskType <= 1 && Game.Player.WantedLevel == 0 && Config.Bools.CopsDoTasks)
                 {
                     if (!cop.IsInVehicle())
@@ -333,8 +361,12 @@ namespace WarrantV
             }
             if (Recog[0] > 80 || Recog[1] > 80)
             {
-                blip.Color = BlipColor.Red;
-                blip.Priority = 14;
+                if (!Config.Bools.DisableAllCopBlips)
+                {
+                    blip.Color = BlipColor.Red;
+                    blip.Priority = 14;
+                }
+                
                 if (TaskType <= 2 && Game.Player.WantedLevel == 0 && Config.Bools.CopsDoTasks)
                 {
                     if (!cop.IsInVehicle()) 
@@ -374,12 +406,17 @@ namespace WarrantV
             if (Recog[0] >= 100 || Recog[1] >= 100)
             {
                 ReturnTaskType = 4;
-                blip.Color = BlipColor.RedDark;
-                blip.Priority = 15;
-                if (Config.Bools.ExtraBlipIndicators)
+                
+                if (!Config.Bools.DisableAllCopBlips)
                 {
-                    if (Recog[0] >= 100) blip.ShowsCrewIndicator = true;
-                    if (Recog[1] >= 100) blip.ShowsFriendIndicator = true;
+                    blip.Color = BlipColor.RedDark;
+                    blip.Priority = 15;
+                    
+                    if (Config.Bools.ExtraBlipIndicators)
+                    {
+                        if (Recog[0] >= 100) blip.ShowsCrewIndicator = true;
+                        if (Recog[1] >= 100) blip.ShowsFriendIndicator = true;
+                    }
                 }
             }
             return ReturnTaskType;
@@ -689,7 +726,10 @@ namespace WarrantV
             {
                 foreach (Tuple<Ped, Blip, float[], int[], Vector3> CopsList in Helpers.CopsList)
                 {
-                    CopsList.Item2.Delete();
+                    if (!Config.Bools.DisableAllCopBlips)
+                    {
+                        CopsList.Item2.Delete();
+                    }
                 }
                 Helpers.CopsList = new List<Tuple<Ped, Blip, float[], int[], Vector3>>();
             }
